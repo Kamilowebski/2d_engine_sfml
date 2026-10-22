@@ -36,6 +36,12 @@ public:
      */
     void run();
 
+    /**
+     * @brief Aktualizuje logike gry.
+     * @param deltaTime Czas od poprzedniej klatki w sekundach
+     */
+    void update(float deltaTime);
+
 private:
     /**
      * @brief Okno renderowania biblioteki SFML.
@@ -52,6 +58,8 @@ private:
      * @brief Pomiar FPS
      */
     sf::Clock fpsClock;
+    sf::Clock deltaClock;
+    float deltaTime = 0.0f;
     unsigned int frameCount = 0;
     unsigned int currentFPS = 0;
 };

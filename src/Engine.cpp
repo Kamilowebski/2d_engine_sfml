@@ -36,8 +36,41 @@ Engine::Engine(
 void Engine::run() {
     while (window.isOpen()) {
         while (std::optional event = window.pollEvent()) {
+            // zamknięcie okna
             if (event->is<sf::Event::Closed>()) {
                 window.close();
+            }
+            //nacisniecie klawisza
+            if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
+                if (keyPressed->code == sf::Keyboard::Key::Escape) {
+                    window.close();
+                }
+                if (keyPressed->code == sf::Keyboard::Key::W) {
+                    std::cout << "Nacisnieto W";
+                }
+                if (keyPressed->code == sf::Keyboard::Key::Space) {
+                    std::cout << "Nacisnieto Space";
+                }
+            }
+
+            //puszczenie klawisza
+            if (const auto* keyReleased = event->getIf<sf::Event::KeyReleased>()) {
+                if (keyReleased->code == sf::Keyboard::Key::W) {
+                    std::cout << "Puszczono W";
+                }
+            }
+
+            //Klikniecie klawisza myszy
+            if (const auto* mousePressed = event->getIf<sf::Event::MouseButtonPressed>()) {
+                if (mousePressed->button == sf::Mouse::Button::Left) {
+                    std::cout << "Nacisnieto L" << mousePressed->position.x << ", " << mousePressed->position.y << std::endl;
+                }
+            }
+
+
+            //Ruch myszy
+            if (const auto* mouseMoved = event->getIf<sf::Event::MouseMoved>()) {
+                std::cout << mouseMoved->position.x << ", " << mouseMoved->position.y << std::endl;
             }
         }
         frameCount++;
@@ -52,10 +85,20 @@ void Engine::run() {
             }
         }
 
+        //Pomiar czasu od poprzedniej klatki
+        deltaTime = deltaClock.restart().asSeconds();
+        //Aktualizacja logiki gry
+        update(deltaTime);
+
+        //Rysowanie klatki
         window.clear(sf::Color::Black);
         if (fpsText.has_value()){
             window.draw(*fpsText);
         }
         window.display();
     }
+}
+
+void Engine::update(float deltaTime) {
+
 }
