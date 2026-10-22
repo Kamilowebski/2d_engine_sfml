@@ -3,6 +3,8 @@
 //
 #include "Engine.hpp"
 
+#include <iostream>
+
 Engine::Engine(
     unsigned int width,
     unsigned int height,
@@ -16,9 +18,19 @@ Engine::Engine(
     } else {
         window.create(sf::VideoMode({width, height}),
             title,
+            sf::Style::Default,
             sf::State::Windowed);
     }
     window.setFramerateLimit(fpsLimit);
+
+    //wczytanie czcionki
+    if (font.openFromFile("arial.ttf")) {
+        fpsText.emplace(font, "FPS: 0", 18);
+        fpsText->setPosition({10.f, 10.f});
+        fpsText->setFillColor(sf::Color::White);
+    } else {
+        std::cerr << "Nie udalo sie wczytac cziocnki!\n";
+    }
 }
 
 void Engine::run() {
@@ -28,7 +40,22 @@ void Engine::run() {
                 window.close();
             }
         }
+        frameCount++;
+        if (fpsClock.getElapsedTime() >= sf::seconds(1)) {
+            currentFPS = frameCount;
+            frameCount = 0;
+
+            fpsClock.restart();
+
+            if (fpsText.has_value()) {
+                fpsText->setString("FPS: " + std::to_string(currentFPS));
+            }
+        }
+
         window.clear(sf::Color::Black);
+        if (fpsText.has_value()){
+            window.draw(*fpsText);
+        }
         window.display();
     }
 }

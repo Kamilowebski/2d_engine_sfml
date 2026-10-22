@@ -3,7 +3,12 @@
 #ifndef PRO_ENGINE_HPP
 #define PRO_ENGINE_HPP
 #include "SFML/Graphics/RenderWindow.hpp"
+#include "SFML/Graphics/Font.hpp"
+#include "SFML/Graphics/Text.hpp"
 #include <string>
+#include <optional>
+
+#include "SFML/Graphics/Text.hpp"
 
 /**
  * @brief Główna klasa silnika 2D
@@ -36,6 +41,19 @@ private:
      * @brief Okno renderowania biblioteki SFML.
      */
     sf::RenderWindow window;
+
+    /**
+     * @brief Czcionka do wyświetlania
+     */
+    sf::Font font;
+    std::optional<sf::Text> fpsText;
+
+    /**
+     * @brief Pomiar FPS
+     */
+    sf::Clock fpsClock;
+    unsigned int frameCount = 0;
+    unsigned int currentFPS = 0;
 };
 
 #endif //PRO_ENGINE_HPP

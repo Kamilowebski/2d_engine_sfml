@@ -9,6 +9,15 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+file(MAKE_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+
+configure_file(
+        "${CMAKE_SOURCE_DIR}/assets/arial.ttf"
+        "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/arial.ttf"
+        COPYONLY
+)
+
+
 include(FetchContent)
 
 FetchContent_Declare(
