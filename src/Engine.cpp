@@ -4,6 +4,7 @@
 #include "Engine.hpp"
 
 #include <iostream>
+#include <utility>
 
 #include "SFML/Graphics/Sprite.hpp"
 
@@ -25,6 +26,12 @@ Engine::Engine(
     }
     window.setFramerateLimit(fpsLimit);
 
+    //TEST CZY DZIALA TWORZENIE
+    sf::Image testImage(
+        sf::Vector2u(100, 100),
+        sf::Color::Red);
+    createSpirte(testImage, 100.0f, 100.0f);
+
     //wczytanie czcionki
     if (font.openFromFile("arial.ttf")) {
         fpsText.emplace(font, "FPS: 0", 18);
@@ -37,21 +44,16 @@ Engine::Engine(
 
 void Engine::run() {
 
-    //TEST CZY DZIALA TWORZENIE
-    sf::Image testImage(
-        sf::Vector2u(100, 100),
-        sf::Color::Red);
-
     while (window.isOpen()) {
         while (std::optional event = window.pollEvent()) {
             // zamknięcie okna
             if (event->is<sf::Event::Closed>()) {
-                window.close();
+                shutdown();
             }
             //nacisniecie klawisza
             if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
                 if (keyPressed->code == sf::Keyboard::Key::Escape) {
-                    window.close();
+                    shutdown();
                 }
                 if (keyPressed->code == sf::Keyboard::Key::W) {
                     std::cout << "Nacisnieto W";
@@ -93,6 +95,9 @@ void Engine::run() {
             }
         }
 
+        if (!window.isOpen()) {
+            break;
+        }
         //Pomiar czasu od poprzedniej klatki
         deltaTime = deltaClock.restart().asSeconds();
         //Aktualizacja logiki gry
@@ -100,7 +105,11 @@ void Engine::run() {
 
         //Rysowanie klatki
         clear(sf::Color::Black);
-        drawImage(testImage, 100.0f, 100.0f);
+
+        for (const auto& sprite : sprites) {
+            window.draw(*sprite);
+        }
+
         if (fpsText.has_value()){
             window.draw(*fpsText);
         }
@@ -143,20 +152,31 @@ void Engine::drawImage(const sf::Image &image, float x, float y) {
 
 std::size_t Engine::createSpirte(const sf::Image &image, float x, float y) {
     //Tworzenie tekstury
-    sf::Texture texture(image);
+    auto texture = std::make_unique<sf::Texture>(image);
 
-    //Przenoszenie tekstury do zasobow silnika
-    textures.push_back(texture);
+    //Pobieramy adres tekstury
+    sf::Texture* texturePointer = texture.get();
 
-    //Tworzenie sprita korzystajacego z zapisanej tekstury
-    auto sprite = std::make_unique<sf::Sprite>(textures.back());
+    //Zapisujemy teksture w zasobach silnika
+    textures.push_back(std::move(texture));
 
-    //Ustalanie pozycji
+    //Tworzymy sprita
+    auto sprite = std::make_unique<sf::Sprite>(*texturePointer);
+
+    //Pozycja Sprita
     sprite->setPosition({x, y});
 
-    //Zapisanie sprite w silniku
+    //Zapis sprita
     sprites.push_back(std::move(sprite));
 
-    //Zwraca indeks spirta
     return sprites.size() - 1;
+}
+
+void Engine::shutdown() {
+    if (window.isOpen()) {
+        window.close();
+    }
+    sprites.clear();
+    textures.clear();
+    fpsText.reset();
 }

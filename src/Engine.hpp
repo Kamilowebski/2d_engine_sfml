@@ -6,6 +6,7 @@
 #include "SFML/Graphics/Font.hpp"
 #include "SFML/Graphics/Text.hpp"
 #include "SFML/Graphics/Image.hpp"
+#include "SFML/Graphics/Sprite.hpp"
 #include <string>
 #include <optional>
 #include <vector>
@@ -95,6 +96,11 @@ public:
         float x,
         float y);
 
+    /**
+     * @brief Zamyka silnik i zwalnia zasoby
+     */
+    void shutdown();
+
 private:
     /**
      * @brief Okno renderowania biblioteki SFML.
@@ -119,7 +125,7 @@ private:
     /**
      * @brief Tekstury do przechowywania przez silnik
      */
-    std::vector<sf::Texture> textures;
+    std::vector<std::unique_ptr<sf::Texture>> textures;
 
     /**
      * @brief Sprite'y korzystajace z tekstur
