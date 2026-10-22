@@ -5,6 +5,7 @@
 #include "SFML/Graphics/RenderWindow.hpp"
 #include "SFML/Graphics/Font.hpp"
 #include "SFML/Graphics/Text.hpp"
+#include "SFML/Graphics/Image.hpp"
 #include <string>
 #include <optional>
 
@@ -41,6 +42,24 @@ public:
      * @param deltaTime Czas od poprzedniej klatki w sekundach
      */
     void update(float deltaTime);
+
+    /**
+     * @brief Czysci ekran na podany kolor
+     * @param color Kolor ktory zostanie uzyty do wypelnienia ekranu
+     */
+    void clear(const sf::Color& color);
+
+    /**
+     * @brief Tworzy obraz o podanym rozmiarze i kolorze
+     * @param width Szerokosc obrazu w px
+     * @param height Wysokosc obrazu w px
+     * @param color Kolor poczatkowy dla wszystkich px
+     * @return Utworzony obraz
+     */
+    sf::Image createImage(
+        unsigned int width,
+        unsigned int height,
+        const sf::Color& color);
 
 private:
     /**

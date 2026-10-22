@@ -23,6 +23,8 @@ Engine::Engine(
     }
     window.setFramerateLimit(fpsLimit);
 
+    sf::Image testImage = createImage(256, 256, sf::Color::Red);
+
     //wczytanie czcionki
     if (font.openFromFile("arial.ttf")) {
         fpsText.emplace(font, "FPS: 0", 18);
@@ -91,7 +93,7 @@ void Engine::run() {
         update(deltaTime);
 
         //Rysowanie klatki
-        window.clear(sf::Color::Black);
+        clear(sf::Color::Black);
         if (fpsText.has_value()){
             window.draw(*fpsText);
         }
@@ -101,4 +103,15 @@ void Engine::run() {
 
 void Engine::update(float deltaTime) {
 
+}
+
+void Engine::clear(const sf::Color &color) {
+    window.clear(color);
+}
+
+sf::Image Engine::createImage(unsigned int width, unsigned int height, const sf::Color &color) {
+    sf::Image image(
+        sf::Vector2u(width, height),
+        color);
+    return image;
 }
