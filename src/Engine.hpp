@@ -8,6 +8,8 @@
 #include "SFML/Graphics/Image.hpp"
 #include <string>
 #include <optional>
+#include <vector>
+#include <memory>
 
 #include "SFML/Graphics/Text.hpp"
 
@@ -61,6 +63,38 @@ public:
         unsigned int height,
         const sf::Color& color);
 
+    /**
+     * @brief Wypelnia cala bitmape podanym kolorem
+     * @param image Obraz ktory ma byc wyczyszczony
+     * @param color Kolor wypelnienia
+     */
+    void clearImage(
+        sf::Image& image,
+        const sf::Color& color);
+
+    /**
+     * @brief Wyswietla obraz w oknie silnika
+     * @param image Obraz do wyswietlenia
+     * @param x Pozycja pozioma
+     * @param y Pozycja pionowa
+     */
+    void drawImage(
+        const sf::Image& image,
+        float x,
+        float y);
+
+    /**
+     * @brief Tworzy sprita na podstawie obrazu
+     * @param image Obraz zrodlowy
+     * @param x Pozycja pozioma Sprita
+     * @param y Pozycja pionowa Sprita
+     * @return Indeks utworzonego Sprita
+     */
+    std::size_t createSpirte(
+        const sf::Image& image,
+        float x,
+        float y);
+
 private:
     /**
      * @brief Okno renderowania biblioteki SFML.
@@ -81,6 +115,16 @@ private:
     float deltaTime = 0.0f;
     unsigned int frameCount = 0;
     unsigned int currentFPS = 0;
+
+    /**
+     * @brief Tekstury do przechowywania przez silnik
+     */
+    std::vector<sf::Texture> textures;
+
+    /**
+     * @brief Sprite'y korzystajace z tekstur
+     */
+    std::vector<std::unique_ptr<sf::Sprite>> sprites;
 };
 
 #endif //PRO_ENGINE_HPP

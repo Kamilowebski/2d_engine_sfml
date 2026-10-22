@@ -5,6 +5,8 @@
 
 #include <iostream>
 
+#include "SFML/Graphics/Sprite.hpp"
+
 Engine::Engine(
     unsigned int width,
     unsigned int height,
@@ -23,8 +25,6 @@ Engine::Engine(
     }
     window.setFramerateLimit(fpsLimit);
 
-    sf::Image testImage = createImage(256, 256, sf::Color::Red);
-
     //wczytanie czcionki
     if (font.openFromFile("arial.ttf")) {
         fpsText.emplace(font, "FPS: 0", 18);
@@ -36,6 +36,12 @@ Engine::Engine(
 }
 
 void Engine::run() {
+
+    //TEST CZY DZIALA TWORZENIE
+    sf::Image testImage(
+        sf::Vector2u(100, 100),
+        sf::Color::Red);
+
     while (window.isOpen()) {
         while (std::optional event = window.pollEvent()) {
             // zamknięcie okna
@@ -94,6 +100,7 @@ void Engine::run() {
 
         //Rysowanie klatki
         clear(sf::Color::Black);
+        drawImage(testImage, 100.0f, 100.0f);
         if (fpsText.has_value()){
             window.draw(*fpsText);
         }
@@ -114,4 +121,42 @@ sf::Image Engine::createImage(unsigned int width, unsigned int height, const sf:
         sf::Vector2u(width, height),
         color);
     return image;
+}
+
+void Engine::clearImage(sf::Image &image, const sf::Color &color) {
+    sf::Vector2u size = image.getSize();
+    for (unsigned int y = 0; y < size.y; y++) {
+        for (unsigned int x = 0; x < size.x; x++) {
+            image.setPixel(
+                sf::Vector2u(x, y),
+                color);
+        }
+    }
+}
+
+void Engine::drawImage(const sf::Image &image, float x, float y) {
+    sf::Texture texture(image);
+    sf::Sprite sprite(texture);
+    sprite.setPosition({x, y});
+    window.draw(sprite);
+}
+
+std::size_t Engine::createSpirte(const sf::Image &image, float x, float y) {
+    //Tworzenie tekstury
+    sf::Texture texture(image);
+
+    //Przenoszenie tekstury do zasobow silnika
+    textures.push_back(texture);
+
+    //Tworzenie sprita korzystajacego z zapisanej tekstury
+    auto sprite = std::make_unique<sf::Sprite>(textures.back());
+
+    //Ustalanie pozycji
+    sprite->setPosition({x, y});
+
+    //Zapisanie sprite w silniku
+    sprites.push_back(std::move(sprite));
+
+    //Zwraca indeks spirta
+    return sprites.size() - 1;
 }
